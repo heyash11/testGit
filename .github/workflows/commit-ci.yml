@@ -16,5 +16,7 @@ jobs:
       - name: Show newfile.txt content
         run: cat newfile.txt
 
-      - name: Deploy (Mock Step)
-        run: echo "✅ Code scanned and ready to deploy!"
+      - name: Run custom logic
+        run: |
+          echo "Running your logic from newfile.txt"
+          cat newfile.txt
