@@ -16,13 +16,6 @@ jobs:
       - name: Show newfile.txt content
         run: cat newfile.txt
 
-      - name: Wait for apt lock (if needed)
-        run: |
-          while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-            echo "Waiting for other apt process to finish..."
-            sleep 5
-          done
-
       - name: Install Trivy
         run: |
           sudo apt-get update -y
