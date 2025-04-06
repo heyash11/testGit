@@ -1,11 +1,11 @@
-name: Vulnerability Scan Only
+name: Trivy Scan & Optional Auto Push
 
 on:
   push:
     branches: [main]
 
 jobs:
-  security-scan:
+  scan-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,11 @@ jobs:
 
       - name: Run Trivy Filesystem Scan
         run: trivy fs . --exit-code 0 --severity HIGH,CRITICAL
+
+      - name: Optional Git Auto Commit & Push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "🤖 Auto-update from GitHub Actions"
+          git push origin main
