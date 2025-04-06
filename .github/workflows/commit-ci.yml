@@ -23,10 +23,16 @@ jobs:
       - name: Run Trivy Filesystem Scan
         run: trivy fs . --exit-code 0 --severity HIGH,CRITICAL
 
-      - name: Optional Git Auto Commit & Push
+      - name: Set up Git user
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
+
+      - name: Commit and Push Changes
+        env:
+          TOKEN: ${{ secrets.TO_TEST }}
+        run: |
           git add .
-          git diff-index --quiet HEAD || git commit -m "🤖 Auto-update from GitHub Actions"
-          git push origin main
+          git diff --cached --quiet || git commit -m "🤖 Auto-update from GitHub Actions"
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
+          git push origin HEAD:main
