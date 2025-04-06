@@ -1,0 +1,22 @@
+name: On Commit CI/CD
+
+on:
+  push:
+    branches:
+      - main  # You can change this to any branch like 'dev' or 'feature/*'
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Show Contents of newfile.txt
+        run: |
+          echo "📄 Printing newfile.txt:"
+          cat newfile.txt
+
+      - name: Commit Success
+        run: echo "✅ Commit processed successfully!"
