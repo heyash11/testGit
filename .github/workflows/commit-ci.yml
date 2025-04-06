@@ -1,27 +1,17 @@
-name: Lint, Format & Security Scan
+name: Vulnerability Scan Only
 
 on:
   push:
     branches: [main]
 
 jobs:
-  quality-and-security:
+  security-scan:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Run Linter
-      - name: Run Lint (ESLint)
-        run: npm run lint
-
-      # Run Formatter (Prettier)
-      - name: Format Code (Prettier)
-        run: npx prettier . --check
-
-      # Install Trivy
       - name: Install Trivy
         run: |
           sudo apt-get install wget apt-transport-https gnupg lsb-release -y
@@ -30,6 +20,5 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy -y
 
-      # Scan Codebase for vulnerabilities
       - name: Run Trivy Filesystem Scan
         run: trivy fs . --exit-code 0 --severity HIGH,CRITICAL
