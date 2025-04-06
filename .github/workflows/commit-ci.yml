@@ -1,38 +1,32 @@
-name: Trivy Scan & Optional Auto Push
+name: Run on EC2 Self-hosted Runner
 
 on:
   push:
     branches: [main]
 
 jobs:
-  scan-and-push:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Show content
+        run: cat newfile.txt
 
       - name: Install Trivy
         run: |
-          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          sudo apt-get update
+          sudo apt-get install wget gnupg lsb-release -y
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
           sudo apt-get update
           sudo apt-get install trivy -y
 
-      - name: Run Trivy Filesystem Scan
+      - name: Scan with Trivy
         run: trivy fs . --exit-code 0 --severity HIGH,CRITICAL
 
-      - name: Set up Git user
+      - name: Run your custom code
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-
-      - name: Commit and Push Changes
-        env:
-          TOKEN: ${{ secrets.TO_TEST }}
-        run: |
-          git add .
-          git diff --cached --quiet || git commit -m "🤖 Auto-update from GitHub Actions"
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
-          git push origin HEAD:main
+          echo "Running your logic from newfile.txt"
